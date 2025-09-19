@@ -68,9 +68,8 @@ describe "Camion De Transporte (peligrosidad)" {
     assert.equals(#{bateriaAntiaerea}, camion.cosasPeligrosasMayoresA(15))
     assert.equals(#{bateriaAntiaerea}, camion.masPeligrosasQue(bumblebee))
 
-    bateriaAntiaerea.tieneMisiles(false)
-    assert.equals(#{knightRider}, camion.cosasPeligrosasMayoresA(2))
-    assert.equals(#{knightRider}, camion.masPeligrosasQue(paqueteDeLadrillos))
+    assert.equals(#{knightRider, bateriaAntiaerea}, camion.cosasPeligrosasMayoresA(2))
+    assert.equals(#{knightRider, bateriaAntiaerea}, camion.masPeligrosasQue(paqueteDeLadrillos))
     assert.throwsException({ camion.cosasPeligrosasMayoresA(200) })
     assert.throwsException({ camion.masPeligrosasQue(residuosRadioactivos) })
   }
@@ -88,5 +87,31 @@ describe "Camion De Transporte (peligrosidad)" {
     paqueteDeLadrillos.cantidad(300)
     bumblebee.modoRobot(true)
     assert.notThat(camion.puedeCircularEn(ruta))
+  }
+  test "Mas cosas" {
+    assert.equals(100, contenedorPortuario.peso())
+    assert.equals(0, contenedorPortuario.nivelPeligrosidad())
+
+    contenedorPortuario.cargar(knightRider)
+    arenaAGranel.peso(50)
+    contenedorPortuario.cargar(arenaAGranel)
+    assert.equals(650, contenedorPortuario.peso())
+    assert.equals(10, contenedorPortuario.nivelPeligrosidad())
+
+    embalajeDeSeguridad.envolver(knightRider)
+    assert.equals(500, embalajeDeSeguridad.peso())
+    assert.equals(5, embalajeDeSeguridad.nivelPeligrosidad())
+    
+    bumblebee.modoRobot(false)
+    embalajeDeSeguridad.envolver(bumblebee)
+    assert.equals(800, embalajeDeSeguridad.peso())
+    assert.equals(7.5, embalajeDeSeguridad.nivelPeligrosidad())
+  }
+  test "Casos extra 'Mas cosas'" {
+    contenedorPortuario.cargar(bumblebee)
+    assert.throwsException({ camion.cargar(bumblebee) })
+
+    embalajeDeSeguridad.envolver(knightRider)
+    camion.cargar()
   }
 }

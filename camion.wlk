@@ -5,6 +5,9 @@ object camion {
 	const tara = 1000
 	const pesoMaximo = 2500
 	
+	method peligrosidad() {
+	  return cosas.sum({cadaCosa => cadaCosa.nivelPeligrosidad()})
+	}
 	method peso() {
 	  return tara + self.pesoDeLaCarga()
 	}
@@ -65,8 +68,8 @@ object camion {
 	  self.validarMasPeligrosasQue(unaCosa)
 	  return cosas.filter({cosa => cosa.nivelPeligrosidad() > unaCosa.nivelPeligrosidad()})
 	}
-	method puedeCircularEnRuta(unaRuta) {
-	  return 
+	method puedeCircularEn(unaRuta) {
+	  return self.peso() <= pesoMaximo && self.peligrosidad() <= unaRuta.peligrosidadMaxima()
 	}
 }
 
