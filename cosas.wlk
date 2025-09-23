@@ -90,7 +90,7 @@ object contenedorPortuario {
 			return cosas.max({laCosaConMas => laCosaConMas.nivelPeligrosidad()}).nivelPeligrosidad()
 		}	
 	}
-	method validarCargar(unaCosa) {
+	method primerValidarCargar(unaCosa) {
 		if (cosas.contains(unaCosa) 
 		|| camion.cosas().contains(unaCosa) 
 		|| (unaCosa.estaEmbalado() && cosas.contains(embalajeDeSeguridad))
@@ -100,8 +100,14 @@ object contenedorPortuario {
 		}
 	}
 	method cargar(unaCosa) {
-		self.validarCargar(unaCosa)
-		cosas.add(unaCosa)
+		self.primerValidarCargar(unaCosa)
+  if (una cosa.estaEmbalado()) {
+    cosas.add(embalajeDeSeguridad)
+  }
+  else {
+    cosas.add(unaCosa)
+  }
+		
 	}
 	method validarDescargar(unaCosa) {
 		if (not cosas.contains(unaCosa)) {
