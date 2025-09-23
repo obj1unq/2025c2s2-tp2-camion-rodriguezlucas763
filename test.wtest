@@ -1,5 +1,5 @@
-import cosas.*
 import camion.*
+import cosas.*
 
 describe "Camion de Transporte (carga y peso)" {
   test "Carga y Descarga" {
