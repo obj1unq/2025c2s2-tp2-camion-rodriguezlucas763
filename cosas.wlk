@@ -8,6 +8,12 @@ object knightRider {
 	method tienePesoPar() {
 		return self.peso() % 2 == 0
 	}
+	method bultos() {
+	  return 1
+	}
+	method seAccidento() {
+	  
+	}
 }
 object arenaAGranel {
 	var property estaEmbalado = false
@@ -16,6 +22,12 @@ object arenaAGranel {
 	method nivelPeligrosidad() { return 10 }
 	method tienePesoPar() {
 		return peso % 2 == 0
+	}
+	method bultos() {
+	  return 1
+	}
+	method seAccidento() {
+	  peso += 20
 	}
 }
 object bumblebee {
@@ -32,20 +44,41 @@ object bumblebee {
 	method tienePesoPar() {
 		return self.peso() % 2 == 0
 	}
+	method bultos() {
+	  return 2
+	}
+	method seAccidento() {
+	  if (modoRobot) {
+		modoRobot = false
+	  }
+	  else modoRobot = true
+	}
 }
 object paqueteDeLadrillos {
 	var property estaEmbalado = false
-	var cantidad = 0
+	var property cantidad = 0
 
-	method cantidad(numero) {
-		cantidad = numero
-	} 
 	method peso() {
 		return cantidad * 2
 	}
 	method nivelPeligrosidad() { return 2 }
 	method tienePesoPar() {
 		return self.peso() % 2 == 0
+	}
+	method bultos() {
+	  if (cantidad <= 100) {
+		return 1
+	  }
+	  else if (cantidad >= 101 && cantidad <= 300) {
+		return 2
+	  }
+	  else return 3
+	}
+	method seAccidento() {
+	  if (cantidad >= 12) {
+		cantidad -= 12
+	  }
+	  else cantidad = 0 
 	}
 }
 object bateriaAntiaerea {
@@ -67,6 +100,15 @@ object bateriaAntiaerea {
 	method tienePesoPar() {
 		return self.peso() % 2 == 0
 	}
+	method bultos() {
+	  if (tieneMisiles) {
+		return 2
+	  }
+	  else return 1
+	}
+	method seAccidento() {
+	  tieneMisiles = false 
+	}
 }
 object residuosRadioactivos {
 	var property estaEmbalado = false
@@ -75,9 +117,16 @@ object residuosRadioactivos {
 	method tienePesoPar() {
 		return self.peso() % 2 == 0
 	}
+	method bultos() {
+	  return 1
+	}
+	method seAccidento() {
+	  peso += 15 
+	}
 }
 object contenedorPortuario {
 	const property cosas = #{}
+	var property estaEmbalado = false
 	
 	method peso() {
 		return 100 + cosas.sum({cadaCosa => cadaCosa.peso()})
@@ -117,13 +166,27 @@ object contenedorPortuario {
 		self.validarDescargar(unaCosa)
 		cosas.remove(unaCosa)
 	}
+	method bultos() {
+	  return 1 + cosas.sum({cadaCosa => cadaCosa.bultos()})
+	}
+	method seAccidento() {
+	  cosas.forEach({cadaCosa => cadaCosa.seAccidento()}) 
+	}
 }
 object embalajeDeSeguridad {
 	var property peso = 0
 	var property nivelPeligrosidad = 0
+	var property estaEmbalado = false
 
 	method envolver(unaCosa) {
+	  unaCosa.estaEmbalado(true)
 	  peso = unaCosa.peso()
 	  nivelPeligrosidad = unaCosa.nivelPeligrosidad() * 0.5
+	}
+	method bultos() {
+	  return 2
+	}
+	method seAccidento() {
+	  
 	}
 }

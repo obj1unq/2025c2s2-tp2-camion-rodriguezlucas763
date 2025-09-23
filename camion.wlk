@@ -1,3 +1,4 @@
+import cosas.*
 object camion {
 	const property cosas = #{}
 	const tara = 1000
@@ -15,14 +16,23 @@ object camion {
 	method estaExcedidoDePeso() {
 	  return self.peso() > pesoMaximo
 	}
-	method validarCargar(unaCosa) {
-	  if (cosas.contains(unaCosa)) {
-		self.error(unaCosa + "ya está en el camión.")
-	  }
+    method validarCargar(unaCosa) {
+		if (cosas.contains(unaCosa) 
+		|| contenedorPortuario.cosas().contains(unaCosa) 
+		|| (unaCosa.estaEmbalado() && cosas.contains(embalajeDeSeguridad))
+		|| (unaCosa.estaEmbalado() && contenedorPortuario.cosas().contains(embalajeDeSeguridad))
+		) {
+			self.error(unaCosa + "ya está en el contenedor o en el camion.")
+		}
 	}
-	method cargar(unaCosa) {
+    method cargar(unaCosa) {
 		self.validarCargar(unaCosa)
-		cosas.add(unaCosa)
+		if (unaCosa.estaEmbalado()) {
+			cosas.add(embalajeDeSeguridad)
+		}
+		else {
+			cosas.add(unaCosa)
+		}		
 	}
 	method validarDescargar(unaCosa) {
 	  if (not cosas.contains(unaCosa)) {
@@ -68,6 +78,28 @@ object camion {
 	}
 	method puedeCircularEn(unaRuta) {
 	  return self.peso() <= pesoMaximo && self.peligrosidad() <= unaRuta.peligrosidadMaxima()
+	}
+	method tieneAlgoQuePesaEntre(minimo, maximo) {
+	  return cosas.any({unaCosa => unaCosa.peso() >= minimo 
+	  							&& unaCosa.peso() <= maximo})	
+	}
+	method validarLaCosaMasPesada() {
+	  if (cosas.isEmpty()) {
+		self.error("El camion esta vacio")
+	  }
+	}
+	method laCosaMasPesada() {
+	  self.validarLaCosaMasPesada()
+	  return cosas.max({unaCosa => unaCosa.peso()})
+	}
+	method pesos() {
+	  return cosas.map({unaCosa => unaCosa.peso()})
+	}
+	method totalBultos() {
+	  return cosas.sum({cadaCosa => cadaCosa.bultos()})
+	}
+	method sufrirAccidente() {
+	  cosas.forEach({cadaCosa => cadaCosa.seAccidento()})
 	}
 }
 
