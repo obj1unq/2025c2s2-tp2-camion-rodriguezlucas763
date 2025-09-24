@@ -142,10 +142,12 @@ object contenedorPortuario {
     method primerValidarCargar(unaCosa) {
 		if (cosas.contains(unaCosa) 
 		|| camion.cosas().contains(unaCosa) 
+		|| almacen.cosas().contains(unaCosa)
+		|| (unaCosa.estaEmbalado() && almacen.cosas().contains(embalajeDeSeguridad))
 		|| (unaCosa.estaEmbalado() && cosas.contains(embalajeDeSeguridad))
 		|| (unaCosa.estaEmbalado() && camion.cosas().contains(embalajeDeSeguridad))
 		) {
-			self.error(unaCosa + "ya está en el contenedor o en el camion.")
+			self.error(unaCosa + "ya está en el contenedor, en el camion, o en el almacen.")
 		}
 	}
     method cargar(unaCosa) {

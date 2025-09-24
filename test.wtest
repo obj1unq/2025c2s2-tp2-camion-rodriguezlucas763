@@ -78,15 +78,15 @@ describe "Camion De Transporte (peligrosidad)" {
     paqueteDeLadrillos.cantidad(300)
     camion.cargar(bumblebee)
     camion.cargar(paqueteDeLadrillos)
-    ruta.peligrosidadMaxima(20)
-    assert.that(camion.puedeCircularEn(ruta))
+    ruta9.peligrosidadMaxima(20)
+    assert.that(camion.puedeCircularEn(ruta9))
 
     paqueteDeLadrillos.cantidad(400)
-    assert.notThat(camion.puedeCircularEn(ruta))
+    assert.notThat(camion.puedeCircularEn(ruta9))
 
     paqueteDeLadrillos.cantidad(300)
     bumblebee.modoRobot(true)
-    assert.notThat(camion.puedeCircularEn(ruta))
+    assert.notThat(camion.puedeCircularEn(ruta9))
   }
   test "Mas cosas" {
     assert.equals(100, contenedorPortuario.peso())
@@ -177,5 +177,20 @@ describe "Camion De Transporte (peligrosidad)" {
     assert.equals(70, arenaAGranel.peso())
     assert.equals(88, paqueteDeLadrillos.cantidad())
     assert.notThat(bateriaAntiaerea.tieneMisiles())
+  }
+  test "Transportar" {
+    almacen.cosas().addAll(#{knightRider, residuosRadioactivos})
+    bumblebee.modoRobot(false)
+    arenaAGranel.peso(50)
+    camion.cargar(bumblebee)
+    camion.cargar(arenaAGranel)
+
+    ruta9.peligrosidadMaxima(25)
+
+    camion.transportar(almacen, ruta9)
+
+    assert.equals(#{knightRider, residuosRadioactivos, bumblebee, arenaAGranel}
+                  , almacen.cosas())
+    assert.that(camion.cosas().isEmpty())
   }
 }

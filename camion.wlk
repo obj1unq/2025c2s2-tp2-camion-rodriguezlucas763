@@ -101,8 +101,36 @@ object camion {
 	method sufrirAccidente() {
 	  cosas.forEach({cadaCosa => cadaCosa.seAccidento()})
 	}
+	method validarTransportar(destino, camino) {
+	  if (not camino.puedeSoportarElViaje()) {
+		self.error("El camion no puede soportar el viaje")
+	  }
+	}
+	method transportar(destino, camino) {
+	  self.validarTransportar(destino, camino)
+	  destino.descargar()
+	}
 }
 
-object ruta {
+object ruta9 {
   var property peligrosidadMaxima = 0
+
+  method puedeSoportarElViaje() {
+	return camion.puedeCircularEn(self)
+  }
+}
+object caminoVecinal {
+  var property pesoMaximo = 0
+
+  method puedeSoportarElViaje() {
+	return camion.peso() <= pesoMaximo
+  }
+}
+object almacen {
+  const property cosas = #{}
+
+  method descargar() {
+	cosas.addAll(camion.cosas())
+	camion.cosas().clear()
+  }
 }
