@@ -1,9 +1,12 @@
 import cosas.*
 object camion {
-	const property cosas = #{}
+	const cosas = #{}
 	const tara = 1000
 	const pesoMaximo = 2500
 	
+	method cosas() {
+	  return cosas
+	}
 	method peligrosidad() {
 	  return cosas.sum({cadaCosa => cadaCosa.nivelPeligrosidad()})
 	}
@@ -17,22 +20,13 @@ object camion {
 	  return self.peso() > pesoMaximo
 	}
     method validarCargar(unaCosa) {
-		if (cosas.contains(unaCosa) 
-		|| contenedorPortuario.cosas().contains(unaCosa) 
-		|| (unaCosa.estaEmbalado() && cosas.contains(embalajeDeSeguridad))
-		|| (unaCosa.estaEmbalado() && contenedorPortuario.cosas().contains(embalajeDeSeguridad))
-		) {
-			self.error(unaCosa + "ya está en el contenedor o en el camion.")
+		if (cosas.contains(unaCosa)) {
+			self.error(unaCosa + "ya está en el camion.")
 		}
 	}
     method cargar(unaCosa) {
 		self.validarCargar(unaCosa)
-		if (unaCosa.estaEmbalado()) {
-			cosas.add(embalajeDeSeguridad)
-		}
-		else {
-			cosas.add(unaCosa)
-		}		
+		cosas.add(unaCosa)		
 	}
 	method validarDescargar(unaCosa) {
 	  if (not cosas.contains(unaCosa)) {
@@ -49,22 +43,10 @@ object camion {
 	method hayAlgunoQuePesa(peso) {
 	  return cosas.any({cadaCosa => cadaCosa.peso() == peso})
 	}
-	method validarElDeNivel(nivel) {
-	  if (not cosas.any({unaCosa => unaCosa.nivelPeligrosidad() == nivel})) {
-		self.error("No hay cosas con nivel de peligrosidad: " + nivel)
-	  }
-	}
 	method elDeNivel(nivel) {
-	  self.validarElDeNivel(nivel)
 	  return cosas.find({cosa => cosa.nivelPeligrosidad() == nivel})
 	}
-	method validarCosasPeligrosasMayoresA(nivel) {
-	  if (not cosas.any({cosa => cosa.nivelPeligrosidad() > nivel})) {
-		self.error("No hay cosas mas peligrosas a" + nivel)
-	  }
-	}
 	method cosasPeligrosasMayoresA(nivel) {
-	  self.validarCosasPeligrosasMayoresA(nivel)
 	  return cosas.filter({cosa => cosa.nivelPeligrosidad() > nivel})
 	}
 	method validarMasPeligrosasQue(unaCosa) {
@@ -108,7 +90,8 @@ object camion {
 	}
 	method transportar(destino, camino) {
 	  self.validarTransportar(destino, camino)
-	  destino.descargar()
+	  cosas.forEach({cadaCosa => self.descargar(cadaCosa)  // o bien cosas.clear(), pero ya que está podría usar descargar() jaja
+	  			   ; almacen.cargar(cadaCosa)}) 
 	}
 }
 
@@ -129,8 +112,7 @@ object caminoVecinal {
 object almacen {
   const property cosas = #{}
 
-  method descargar() {
-	cosas.addAll(camion.cosas())
-	camion.cosas().clear()
+  method cargar(unaCosa) {
+	cosas.add(unaCosa)
   }
 }

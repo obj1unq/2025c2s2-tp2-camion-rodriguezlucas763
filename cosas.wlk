@@ -6,7 +6,7 @@ object knightRider {
 	method peso() { return 500 }
 	method nivelPeligrosidad() { return 10 }
 	method tienePesoPar() {
-		return self.peso() % 2 == 0
+		return self.peso().even()
 	}
 	method bultos() {
 	  return 1
@@ -16,12 +16,11 @@ object knightRider {
 	}
 }
 object arenaAGranel {
-	var property estaEmbalado = false
 	var property peso = 0 
 
 	method nivelPeligrosidad() { return 10 }
 	method tienePesoPar() {
-		return peso % 2 == 0
+		return peso.even()
 	}
 	method bultos() {
 	  return 1
@@ -31,7 +30,6 @@ object arenaAGranel {
 	}
 }
 object bumblebee {
-	var property estaEmbalado = false
 	var property modoRobot = false
 
 	method peso() { return 800 }
@@ -42,20 +40,16 @@ object bumblebee {
 		else return 15
 	}
 	method tienePesoPar() {
-		return self.peso() % 2 == 0
+		return self.peso().even()
 	}
 	method bultos() {
 	  return 2
 	}
 	method seAccidento() {
-	  if (modoRobot) {
-		modoRobot = false
-	  }
-	  else modoRobot = true
+	  modoRobot = not modoRobot
 	}
 }
 object paqueteDeLadrillos {
-	var property estaEmbalado = false
 	var property cantidad = 0
 
 	method peso() {
@@ -63,7 +57,7 @@ object paqueteDeLadrillos {
 	}
 	method nivelPeligrosidad() { return 2 }
 	method tienePesoPar() {
-		return self.peso() % 2 == 0
+		return self.peso().even()
 	}
 	method bultos() {
 	  if (cantidad <= 100) {
@@ -82,7 +76,6 @@ object paqueteDeLadrillos {
 	}
 }
 object bateriaAntiaerea {
-	var property estaEmbalado = false
 	var property tieneMisiles = false
 
 	method peso() {
@@ -98,7 +91,7 @@ object bateriaAntiaerea {
 		else return 0
 	}
 	method tienePesoPar() {
-		return self.peso() % 2 == 0
+		return self.peso().even()
 	}
 	method bultos() {
 	  if (tieneMisiles) {
@@ -111,11 +104,10 @@ object bateriaAntiaerea {
 	}
 }
 object residuosRadioactivos {
-	var property estaEmbalado = false
 	var property peso = 0
 	method nivelPeligrosidad() { return 200 }
 	method tienePesoPar() {
-		return self.peso() % 2 == 0
+		return self.peso().even()
 	}
 	method bultos() {
 	  return 1
@@ -126,10 +118,13 @@ object residuosRadioactivos {
 }
 object contenedorPortuario {
 	const property cosas = #{}
-	var property estaEmbalado = false
+	const pesoDelContenedor = 100
 	
+	method pesoDeLaCarga() {
+	  return cosas.sum({cadaCosa => cadaCosa.peso()})
+	}
 	method peso() {
-		return 100 + cosas.sum({cadaCosa => cadaCosa.peso()})
+		return pesoDelContenedor + self.pesoDeLaCarga()
 	}
 	method nivelPeligrosidad() {
 		if (cosas.isEmpty()) {
@@ -139,25 +134,14 @@ object contenedorPortuario {
 			return cosas.max({laCosaConMas => laCosaConMas.nivelPeligrosidad()}).nivelPeligrosidad()
 		}	
 	}
-    method primerValidarCargar(unaCosa) {
-		if (cosas.contains(unaCosa) 
-		|| camion.cosas().contains(unaCosa) 
-		|| almacen.cosas().contains(unaCosa)
-		|| (unaCosa.estaEmbalado() && almacen.cosas().contains(embalajeDeSeguridad))
-		|| (unaCosa.estaEmbalado() && cosas.contains(embalajeDeSeguridad))
-		|| (unaCosa.estaEmbalado() && camion.cosas().contains(embalajeDeSeguridad))
-		) {
-			self.error(unaCosa + "ya está en el contenedor, en el camion, o en el almacen.")
+    method validarCargar(unaCosa) {
+		if (cosas.contains(unaCosa)) {
+			self.error(unaCosa + "ya está en el contenedor.")
 		}
 	}
     method cargar(unaCosa) {
-		self.primerValidarCargar(unaCosa)
-		if (unaCosa.estaEmbalado()) {
-			cosas.add(embalajeDeSeguridad)
-		}
-		else {
-			cosas.add(unaCosa)
-		}		
+		self.validarCargar(unaCosa)
+		cosas.add(unaCosa)	
 	}
 	method validarDescargar(unaCosa) {
 		if (not cosas.contains(unaCosa)) {
@@ -178,10 +162,10 @@ object contenedorPortuario {
 object embalajeDeSeguridad {
 	var property peso = 0
 	var property nivelPeligrosidad = 0
-	var property estaEmbalado = false
+	var objetoEmbalado = ""
 
 	method envolver(unaCosa) {
-	  unaCosa.estaEmbalado(true)
+	  objetoEmbalado = unaCosa
 	  peso = unaCosa.peso()
 	  nivelPeligrosidad = unaCosa.nivelPeligrosidad() * 0.5
 	}
