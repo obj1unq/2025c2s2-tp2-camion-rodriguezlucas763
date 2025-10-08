@@ -46,7 +46,16 @@ object camion {
 	method elDeNivel(nivel) {
 	  return cosas.find({cosa => cosa.nivelPeligrosidad() == nivel})
 	}
+	method validarCosasPeligrosasMayoresA(nivel) {
+	  if (not self.hayCosaConPeligrosidadMayorA(nivel)) {
+		self.error("No hay cosas con un nivel de peligrosidad mayor a " + nivel)
+	  }
+	}
+	method hayCosaConPeligrosidadMayorA(nivel) {
+	  return cosas.filter({cosa => cosa.nivelPeligrosidad() > nivel}) != #{}
+	}
 	method cosasPeligrosasMayoresA(nivel) {
+	  self.validarCosasPeligrosasMayoresA(nivel)
 	  return cosas.filter({cosa => cosa.nivelPeligrosidad() > nivel})
 	}
 	method validarMasPeligrosasQue(unaCosa) {

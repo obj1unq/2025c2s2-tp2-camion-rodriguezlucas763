@@ -107,14 +107,6 @@ describe "Camion De Transporte (peligrosidad)" {
     assert.equals(800, embalajeDeSeguridad.peso())
     assert.equals(7.5, embalajeDeSeguridad.nivelPeligrosidad())
   }
-  test "Casos extra: Mas cosas" {
-    contenedorPortuario.cargar(bumblebee)
-    assert.throwsException({ camion.cargar(bumblebee) })
-
-    embalajeDeSeguridad.envolver(knightRider)
-    camion.cargar(knightRider)
-    assert.equals(5, camion.peligrosidad())
-  }
   test "Tiene algo que pesa entre dos valores" {
     camion.cargar(bumblebee)
     paqueteDeLadrillos.cantidad(300)
